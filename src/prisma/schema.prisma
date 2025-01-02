@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String
+  role      UserRole
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  orders    Order[]
+  messages  Message[]
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  description    String
+  specifications String
+  quantity       Int
+  status         OrderStatus @default(REVIEW)
+  metadata       Json        
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  chatRoom       ChatRoom?   @relation("OrderChatRoom", fields: [chatRoomId], references: [id])
+  chatRoomId     String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  Chat           Chat?
+}
+
+model Chat {
+  id         String    @id @default(cuid())
+  orderId    String    @unique
+  order      Order     @relation(fields: [orderId], references: [id])
+  chatRoomId String
+  chatRoom   ChatRoom  @relation("ChatChatRoom", fields: [chatRoomId], references: [id])
+  messages   Message[]
+  isClosed   Boolean   @default(false)
+  summary    String?   @db.VarChar(50)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model ChatRoom {
+  id        String    @id @default(cuid())
+  chats     Chat[]    @relation("ChatChatRoom")
+  orders    Order[]   @relation("OrderChatRoom")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  chatRoomId String
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  createdAt  DateTime @default(now())
+  Chat       Chat?    @relation(fields: [chatId], references: [id])
+  chatId     String?
+}
+
+
+
+enum UserRole {
+  ADMIN
+  REGULAR
+}
+
+enum OrderStatus {
+  REVIEW
+  PROCESSING
+  COMPLETED
+}
