@@ -1,6 +1,6 @@
 # Order Management System
 
-A backend application built with **NestJS** and **Prisma**, using **MongoDB** as the database. It allows **regular users** to create orders, each associated with a unique chat room for communication with administrators.
+A backend application built with **NestJS** and **Prisma**, using **Postgresssql** as the database. It allows **regular users** to create orders, each associated with a unique chat room for communication with administrators.
 
 ## Technologies Used
 
@@ -95,6 +95,7 @@ order-management-system/
 │   ├── prisma/
 │   │   ├── schema.prisma
 │   ├── shared/
+|   |   ├── enums/
 │   │   ├── interfaces/
 │   │   └── utils/
 │   ├── app.module.ts
@@ -108,14 +109,6 @@ order-management-system/
 Ensure schema.prisma is located at ./prisma/schema.prisma. If it's elsewhere, specify the path using the --schema flag:
 
 npx prisma generate --schema=./path/to/schema.prisma
-
-API Property Decorator Errors
-
-Make sure you have the latest version of @nestjs/swagger:
-
-
-npm install @nestjs/swagger@latest
-Foreign Key Constraint Issues
 
 Verify that all referenced records exist before creating or updating related documents.
 
